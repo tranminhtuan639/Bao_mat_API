@@ -1,0 +1,41 @@
+### Build & Runtime ###
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.log
+.sts4-cache
+build/
+
+### Maven ###
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### IDE - IntelliJ ###
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+### IDE - VS Code ###
+.vscode/
+
+### IDE - Eclipse/STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+
+### OS ###
+.DS_Store
+Thumbs.db
+
+### Security & Config (QUAN TRỌNG) ###
+# Nếu mày muốn giữ application.properties trên local nhưng không muốn nó lên Git
+# application.properties
+# application.yml
