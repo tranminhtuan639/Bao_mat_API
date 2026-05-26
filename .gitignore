@@ -21,7 +21,8 @@ build/
 out/
 
 ### IDE - VS Code ###
-.vscode/
+# Bỏ chặn .vscode để team dùng chung cấu hình launch.json đọc file .env
+# .vscode/ 
 
 ### IDE - Eclipse/STS ###
 .apt_generated
@@ -35,7 +36,8 @@ out/
 .DS_Store
 Thumbs.db
 
-### Security & Config (QUAN TRỌNG) ###
-# Nếu mày muốn giữ application.properties trên local nhưng không muốn nó lên Git
-# application.properties
-# application.yml
+### SECURITY (QUAN TRỌNG) ###
+.env
+*.json
+!Security_Demo_Collection.postman_collection.json
+!pom.xml

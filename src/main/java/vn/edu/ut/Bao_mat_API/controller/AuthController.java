@@ -9,27 +9,36 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
     private final AuthService authService;
 
-    @PostMapping("/register")
+    @PostMapping("/api/auth/register")
     public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
-        System.out.println("=== REGISTER CALLED ===");
         return ResponseEntity.ok(authService.register(request));
     }
 
-    @PostMapping("/login")
+    @PostMapping("/api/auth/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
         return ResponseEntity.ok(authService.login(request));
     }
 
     // ⚠️ VULN: logout không blacklist token
-    // Client xóa token nhưng token vẫn hợp lệ đến khi hết hạn
-    @PostMapping("/logout")
+    @PostMapping("/api/auth/logout")
     public ResponseEntity<String> logout() {
         return ResponseEntity.ok("Đăng xuất thành công");
+    }
+
+    // OAuth2 success - token lộ trên URL ⚠️ VULN
+    @GetMapping("/oauth2/success")
+    public ResponseEntity<AuthResponse> oauth2Success(
+            @RequestParam String token,
+            @RequestParam String name) {
+        return ResponseEntity.ok(AuthResponse.builder()
+                .token(token)
+                .username(name)
+                .role("USER")
+                .build());
     }
 }
