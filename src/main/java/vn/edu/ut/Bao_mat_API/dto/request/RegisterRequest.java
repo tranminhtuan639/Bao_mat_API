@@ -9,5 +9,7 @@ public class RegisterRequest {
     private String password;
     // ⚠️ VULN: Mass Assignment
     // User tự gửi role=ADMIN khi register là được
-    private String role;
+    
+    // Đã xóa biến role để client không thể tự phong ADMIN
+    // private String role;
 }

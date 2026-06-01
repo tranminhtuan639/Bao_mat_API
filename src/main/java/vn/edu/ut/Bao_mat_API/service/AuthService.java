@@ -28,8 +28,11 @@ public class AuthService {
 
         // ⚠️ VULN: Mass Assignment
         // Lấy role trực tiếp từ request, user tự set role=ADMIN được
-        String role = request.getRole() != null ? request.getRole() : "USER";
-
+        // String role = request.getRole() != null ? request.getRole() : "USER";
+        
+        // ✅ ĐÃ VÁ LỖI: Gán cứng quyền USER cho mọi tài khoản mới
+        String role = "USER";
+        
         User user = User.builder()
                 .username(request.getUsername())
                 .email(request.getEmail())

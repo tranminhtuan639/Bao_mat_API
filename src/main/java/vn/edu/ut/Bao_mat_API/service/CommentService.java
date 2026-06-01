@@ -56,6 +56,11 @@ public class CommentService {
     public CommentResponse updateComment(Long commentId, String username, CommentRequest request) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy comment id: " + commentId));
+                
+        // ✅ ĐÃ VÁ LỖI IDOR: Kiểm tra xem người sửa có phải là chủ nhân comment không
+        if (!comment.getUser().getUsername().equals(username)) {
+            throw new RuntimeException("Lỗi IDOR: Bạn không có quyền sửa bình luận của người khác!");
+        }
 
         // ⚠️ VULN: IDOR - không kiểm tra comment có thuộc về user này không
         // Bất kỳ user nào cũng sửa được comment của người khác
@@ -66,7 +71,10 @@ public class CommentService {
     public void deleteComment(Long commentId, String username) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy comment id: " + commentId));
-
+        // ✅ ĐÃ VÁ LỖI IDOR: Kiểm tra xem người xóa có phải là chủ nhân comment không
+        if (!comment.getUser().getUsername().equals(username)) {
+            throw new RuntimeException("Lỗi IDOR: Bạn không có quyền xóa bình luận của người khác!");
+        }
         // ⚠️ VULN: IDOR - không kiểm tra ownership
         // Bất kỳ user nào cũng xóa được comment của người khác
         commentRepository.delete(comment);
