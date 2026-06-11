@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Documentation - Swagger UI</title>
+    <link rel="stylesheet" type="text/css" href="/webjars/swagger-ui/swagger-ui.css">
+    <style>
+        html {
+            box-sizing: border-box;
+            overflow: -moz-scrollbars-vertical;
+            overflow-y: scroll;
+        }
+        *, *:before, *:after {
+            box-sizing: inherit;
+        }
+        body {
+            margin: 0;
+            background: #fafafa;
+        }
+        .topbar {
+            background-color: #fafafa;
+            padding: 10px 0;
+            border-bottom: 1px solid #ebebeb;
+        }
+        .token-info {
+            background: #c3e7f0;
+            padding: 15px 20px;
+            margin: 0;
+            font-size: 13px;
+            color: #3b474f;
+            border-bottom: 1px solid #92c5d4;
+        }
+        .token-info strong {
+            color: #0277bd;
+        }
+    </style>
+</head>
+<body>
+    <div class="token-info" id="tokenInfo" style="display:none;">
+        <strong>✅ Đăng nhập OAuth2 thành công!</strong> - Token được load tự động vào các request API
+    </div>
+    <div id="swagger-ui"></div>
+
+    <script src="/webjars/swagger-ui/swagger-ui-bundle.js" charset="UTF-8"></script>
+    <script src="/webjars/swagger-ui/swagger-ui-standalone-preset.js" charset="UTF-8"></script>
+    <script>
+        // Lấy token từ localStorage (được set trong oauth2-callback.html)
+        const token = localStorage.getItem('JWT_TOKEN');
+        const userName = localStorage.getItem('USER_NAME');
+
+        // Hiển thị notification nếu có token
+        if (token) {
+            document.getElementById('tokenInfo').style.display = 'block';
+        }
+
+        // Initialize Swagger UI với request interceptor để auto-thêm token
+        window.onload = function() {
+            const ui = SwaggerUIBundle({
+                url: "/v3/api-docs",
+                dom_id: '#swagger-ui',
+                deepLinking: true,
+                presets: [
+                    SwaggerUIBundle.presets.apis,
+                    SwaggerUIStandalonePreset
+                ],
+                plugins: [
+                    SwaggerUIBundle.plugins.DownloadUrl
+                ],
+                layout: "StandaloneLayout",
+                
+                // ✅ Inject token vào Authorization header cho mọi request
+                requestInterceptor: function(request) {
+                    if (token) {
+                        request.headers['Authorization'] = 'Bearer ' + token;
+                    }
+                    return request;
+                },
+                
+                // ✅ Persist authorization cài đặt
+                persistAuthorization: true
+            })
+            window.ui = ui
+        }
+    </script>
+</body>
+</html>

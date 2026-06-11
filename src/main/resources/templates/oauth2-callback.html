@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OAuth2 Callback - Redirecting...</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .container {
+            text-align: center;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .message {
+            color: #666;
+            margin-top: 20px;
+        }
+        .token-display {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            text-align: left;
+            word-break: break-all;
+            font-size: 12px;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Đăng nhập OAuth2 thành công!</h1>
+        <div class="loader"></div>
+        <p class="message">Đang chuyển hướng đến Swagger UI...</p>
+        <div class="token-display" id="tokenDisplay">
+            <strong>Token:</strong> <span id="tokenValue" style="color: #667eea;">Loading...</span>
+        </div>
+    </div>
+
+    <script>
+        // Lấy token từ HTML (được server truyền vào)
+        const token = '[[${token}]]';
+        const userName = '[[${userName}]]';
+
+        // Hiển thị token
+        document.getElementById('tokenValue').textContent = token ? token.substring(0, 50) + '...' : 'No token';
+
+        // Lưu token vào localStorage để Swagger UI có thể sử dụng
+        if (token && token !== 'null') {
+            localStorage.setItem('JWT_TOKEN', token);
+            localStorage.setItem('USER_NAME', userName);
+            
+            // Đợi 1 giây rồi redirect đến custom Swagger UI page với token auto-injected
+            setTimeout(() => {
+                window.location.href = '/swagger-with-token.html';
+            }, 1000);
+        } else {
+            document.getElementById('tokenDisplay').innerHTML = '<span style="color: red;">❌ Token không hợp lệ!</span>';
+        }
+    </script>
+</body>
+</html>
