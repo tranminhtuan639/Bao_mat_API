@@ -21,9 +21,6 @@ public class SwaggerConfig {
                                 ## Thực hành tấn công và bảo mật API
                                 
                                 ### JWT Vulnerabilities (có chủ đích):
-                                - ⚠️ **Weak Secret Key** → Brute force được
-                                - ⚠️ **Mass Assignment** → Tự set role=ADMIN khi register
-                                - ⚠️ **No Token Blacklist** → Token vẫn dùng được sau logout
                                 - ⚠️ **IDOR** → Xóa/sửa comment của người khác
                                 
                                 ### OAuth2 Vulnerabilities (có chủ đích):

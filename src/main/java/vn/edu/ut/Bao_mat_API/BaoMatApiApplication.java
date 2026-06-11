@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class BaoMatApiApplication {
-// \mvnw.cmd spring-boot:run
+// .\mvnw.cmd spring-boot:run
 	public static void main(String[] args) {
 		// Load .env file
 		Dotenv dotenv = Dotenv.configure()

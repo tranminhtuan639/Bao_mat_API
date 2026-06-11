@@ -17,6 +17,10 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import vn.edu.ut.Bao_mat_API.entity.User;
+import vn.edu.ut.Bao_mat_API.repository.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -25,6 +29,7 @@ public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
     private final JwtUtils jwtUtils;
+    private final UserRepository userRepository;
 
     @Bean
     @Order(1)
@@ -44,7 +49,7 @@ public class SecurityConfig {
 
     @Bean
     @Order(2)
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, PasswordEncoder passwordEncoder) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
             // Fix: OAuth2 cần session, chỉ STATELESS cho API thôi
@@ -94,7 +99,26 @@ public class SecurityConfig {
                     String email = oauth2User.getAttribute("email");
                     String name = oauth2User.getAttribute("name");
 
-                    String token = jwtUtils.generateToken(email, "USER");
+                    // Auto tạo hoặc cập nhật user OAuth2 trong DB
+                    User user = userRepository.findByEmail(email).orElse(null);
+                    if (user == null) {
+                        // Tạo user mới với username = tên thật
+                        user = User.builder()
+                                .username(name)
+                                .email(email)
+                                .password(passwordEncoder.encode("OAUTH2_USER_" + System.currentTimeMillis()))
+                                .role("USER")
+                                .build();
+                        userRepository.save(user);
+                    } else {
+                        // Cập nhật username = tên thật nếu khác
+                        if (!name.equals(user.getUsername())) {
+                            user.setUsername(name);
+                            userRepository.save(user);
+                        }
+                    }
+
+                    String token = jwtUtils.generateToken(email, user.getRole());
                     String encodedName = java.net.URLEncoder.encode(name, "UTF-8");
 
                     // ⚠️ VULN: token lộ trên URL

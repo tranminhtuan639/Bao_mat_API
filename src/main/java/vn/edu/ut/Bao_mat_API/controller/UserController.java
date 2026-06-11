@@ -19,7 +19,9 @@ public class UserController {
     // Profile của chính mình
     @GetMapping("/api/me")
     public ResponseEntity<User> getMyProfile(@AuthenticationPrincipal String username) {
+        // JWT subject có thể là username (đăng nhập thường) hoặc email (đăng nhập OAuth2)
         User user = userRepository.findByUsername(username)
+                .or(() -> userRepository.findByEmail(username))
                 .orElseThrow(() -> new RuntimeException("User không tồn tại"));
         return ResponseEntity.ok(user);
     }
